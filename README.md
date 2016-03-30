@@ -54,6 +54,8 @@ Mac using homebrew:
 
 We plan to begin releasing versioned pre-built binaries soon.
 
+(for development guides, see [here](docs/contributing.md)
+
 ### Initial Setup
 
 Currently, sous cannot do much without a sous server instance to provide
@@ -174,4 +176,3 @@ can do this:
     sous contracts -image <image>
 
 Replacing `<image>` with the name of the image you want to test.
-
