@@ -432,11 +432,13 @@ func newSelector(regClient LocalDockerClient, log *sous.LogSet) sous.Selector {
 	}
 }
 
-func newDockerBuilder(cfg LocalSousConfig, nc *docker.NameCache, ctx *sous.SourceContext, source LocalWorkDirShell, scratch ScratchDirShell) (*docker.Builder, error) {
+func newDockerBuilder(regClient LocalDockerClient, cfg LocalSousConfig,
+	nc *docker.NameCache, ctx *sous.SourceContext,
+	source LocalWorkDirShell, scratch ScratchDirShell) (*docker.Builder, error) {
 	drh := cfg.Docker.RegistryHost
 	source.Sh = source.Sh.Clone().(*shell.Sh)
 	source.Sh.LongRunning(true)
-	return docker.NewBuilder(nc, drh, source.Sh, scratch.Sh)
+	return docker.NewBuilder(nc, drh, regClient, source.Sh, scratch.Sh)
 }
 
 func newLabeller(db *docker.Builder) sous.Labeller {

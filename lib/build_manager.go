@@ -31,13 +31,18 @@ func (m *BuildManager) Build() (*BuildResult, error) {
 	err := firsterr.Set(
 		func(e *error) { *e = m.BuildConfig.Validate() },
 		func(e *error) { bc = m.BuildConfig.NewContext() },
+		func(e *error) {
+			if m.CheckExists(bc) {
+				bc.Advisories = append(bc.Advisories, RevisionRebuilt)
+			}
+		},
 		func(e *error) { *e = m.BuildConfig.GuardStrict(bc) },
 		func(e *error) { bp, *e = m.SelectBuildpack(bc) },
 		// TODO: Maybe return the detected detect result from SelectBuildpack to
 		// avoid running detect twice for the chosen buildpack.
 		func(e *error) { dr, *e = bp.Detect(bc) },
 		func(e *error) { br, *e = bp.Build(bc, dr) },
-		func(e *error) { br.Advisories = bc.Advisories },
+		func(e *error) { br.Advisories = br.Advisories.merge(bc.Advisories) },
 		func(e *error) { *e = m.ApplyMetadata(br, bc) },
 		func(e *error) { *e = m.RegisterAndWarnAdvisories(br, bc) },
 	)

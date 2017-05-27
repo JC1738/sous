@@ -13,7 +13,7 @@ func TestBuildResultString(t *testing.T) {
 
 	br := &BuildResult{
 		Elapsed:     time.Second * 5,
-		Advisories:  []string{"ephemeral tag"},
+		Advisories:  Advisories{EphemeralTag},
 		VersionName: "something-something-2.3.4",
 	}
 

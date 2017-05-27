@@ -23,6 +23,7 @@ type (
 		// Register takes a BuildResult and makes it available for the deployment
 		// target system to find during deployment
 		Register(*BuildResult, *BuildContext) error
+		CheckExists(*BuildContext) bool
 	}
 
 	// Strpairs is a slice of Strpair.
@@ -69,9 +70,9 @@ type (
 	BuildResult struct {
 		ImageID                   string
 		VersionName, RevisionName string
-		Advisories                []string
 		Elapsed                   time.Duration
 		ExtraResults              map[string]*BuildResult
+		Advisories
 	}
 
 	// EchoSelector wraps a buildpack Factory. But why?
@@ -88,7 +89,7 @@ func (s *EchoSelector) SelectBuildpack(c *BuildContext) (Buildpack, error) {
 func (br *BuildResult) String() string {
 	str := fmt.Sprintf("Built: %q", br.VersionName)
 	if len(br.Advisories) > 0 {
-		str = str + "\nAdvisories:\n  " + strings.Join(br.Advisories, "  \n")
+		str = str + "\nAdvisories:\n  " + strings.Join(br.Advisories.strings(), "  \n")
 	}
 	return fmt.Sprintf("%s\nElapsed: %s", str, br.Elapsed)
 }

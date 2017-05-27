@@ -57,7 +57,33 @@ const (
 	// untracked files present, or that one or more tracked files were modified
 	// since the last commit.
 	DirtyWS = AdvisoryName(`dirty workspace`)
+	// RevisionRebuilt means that there is already an artifact built for this revision/tag pair.
+	RevisionRebuilt = AdvisoryName(`tag,revisions already built and registered`)
 )
+
+func (ads Advisories) merge(other Advisories) Advisories {
+	child := Advisories{}
+	child = append(child, ads...)
+
+Item:
+	for _, a := range other {
+		for _, z := range child {
+			if z == a {
+				continue Item
+			}
+		}
+		child = append(child, a)
+	}
+	return child
+}
+
+func (ads Advisories) strings() []string {
+	strs := []string{}
+	for _, a := range ads {
+		strs = append(strs, string(a))
+	}
+	return strs
+}
 
 // NewContext returns a new BuildContext updated based on the user's intent as expressed in the Config
 func (c *BuildConfig) NewContext() *BuildContext {
@@ -142,14 +168,14 @@ func (c *BuildConfig) GuardStrict(bc *BuildContext) error {
 	}
 	as := bc.Advisories
 	if len(as) > 0 {
-		return fmt.Errorf("Strict built encountered advisories:\n  %s", strings.Join(as, "  \n"))
+		return fmt.Errorf("Strict built encountered advisories:\n  %s", strings.Join(as.strings(), "  \n"))
 	}
 	return nil
 }
 
 // GuardRegister returns an error if any development-only advisories exist
 func (c *BuildConfig) GuardRegister(bc *BuildContext) error {
-	var blockers []string
+	var blockers Advisories
 	for _, a := range bc.Advisories {
 		switch AdvisoryName(a) {
 		case DirtyWS, UnpushedRev, NoRepoAdv, NotRequestedRevision:
@@ -157,14 +183,14 @@ func (c *BuildConfig) GuardRegister(bc *BuildContext) error {
 		}
 	}
 	if len(blockers) > 0 {
-		return fmt.Errorf("build may not be deployable in all clusters due to advisories:\n  %s", strings.Join(blockers, "\n  "))
+		return fmt.Errorf("build may not be deployable in all clusters due to advisories:\n  %s", strings.Join(blockers.strings(), "\n  "))
 	}
 	return nil
 }
 
 // Advisories returns a list of advisories that apply to ctx.
-func (c *BuildConfig) Advisories(ctx *BuildContext) []string {
-	advs := []string{}
+func (c *BuildConfig) Advisories(ctx *BuildContext) Advisories {
+	advs := Advisories{}
 	s := ctx.Source
 	knowsRepo := false
 	for _, r := range s.RemoteURLs {
@@ -174,19 +200,19 @@ func (c *BuildConfig) Advisories(ctx *BuildContext) []string {
 		}
 	}
 	if !knowsRepo {
-		advs = append(advs, string(UnknownRepo))
+		advs = append(advs, UnknownRepo)
 	}
 
 	if s.RemoteURL == "" {
-		advs = append(advs, string(NoRepoAdv))
+		advs = append(advs, NoRepoAdv)
 	}
 
 	if c.Revision != "" && c.Revision != s.Revision {
-		advs = append(advs, string(NotRequestedRevision))
+		advs = append(advs, NotRequestedRevision)
 	}
 
 	if c.Context.Source.Version().Version.Format(`M.m.p`) == `0.0.0` {
-		advs = append(advs, string(Unversioned))
+		advs = append(advs, Unversioned)
 	}
 
 	if c.Tag != "" {
@@ -198,19 +224,19 @@ func (c *BuildConfig) Advisories(ctx *BuildContext) []string {
 			}
 		}
 		if !hasTag {
-			advs = append(advs, string(EphemeralTag))
+			advs = append(advs, EphemeralTag)
 		} else if s.NearestTagRevision != s.Revision {
 			Log.Debug.Printf("%s != %s", s.NearestTagRevision, s.Revision)
-			advs = append(advs, string(TagNotHead))
+			advs = append(advs, (TagNotHead))
 		}
 	}
 
 	if s.DirtyWorkingTree {
-		advs = append(advs, string(DirtyWS))
+		advs = append(advs, DirtyWS)
 	}
 
 	if s.RevisionUnpushed {
-		advs = append(advs, string(UnpushedRev))
+		advs = append(advs, UnpushedRev)
 	}
 
 	return advs

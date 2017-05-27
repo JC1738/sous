@@ -19,6 +19,7 @@ type (
 		DockerRegistryHost        string
 		SourceShell, ScratchShell shell.Shell
 		Pack                      sous.Buildpack
+		registry                  docker_registry.Client
 	}
 	// BuildTarget represents a single target within a Build.
 	BuildTarget interface {
@@ -30,12 +31,12 @@ type (
 // NewBuilder creates a new build using source code in the working
 // directory of sourceShell, and using the working dir of scratchShell as
 // temporary storage.
-func NewBuilder(nc sous.Inserter, drh string, sourceShell, scratchShell shell.Shell) (*Builder, error) {
+func NewBuilder(nc sous.Inserter, drh string, reg docker_registry.Client, sourceShell, scratchShell shell.Shell) (*Builder, error) {
 	b := &Builder{
-		ImageMapper:        nc,
 		DockerRegistryHost: drh,
 		SourceShell:        sourceShell,
 		ScratchShell:       scratchShell,
+		registry:           reg,
 	}
 
 	files, err := scratchShell.List()
@@ -56,6 +57,18 @@ func (b *Builder) debug(msg string) {
 
 func (b *Builder) info(msg string) {
 	Log.Info.Printf(msg)
+}
+
+// CheckExists implements Registrar on Builder
+func (b *Builder) CheckExists(bc *sous.BuildContext) bool {
+	imageName = b.VersionTag(bc.Version(), "")
+
+	_, err := b.registry.GetImageMetadata(imageName, "")
+	if err != nil {
+		return false
+	}
+	return true
+
 }
 
 // Register registers the build artifact to the the registry

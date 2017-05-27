@@ -9,13 +9,13 @@ import (
 type (
 	// BuildContext contains all the data required to perform a build.
 	BuildContext struct {
-		Sh         shell.Shell
-		Source     SourceContext
-		Scratch    ScratchContext
-		Machine    Machine
-		User       user.User
-		Changes    Changes
-		Advisories []string
+		Sh      shell.Shell
+		Source  SourceContext
+		Scratch ScratchContext
+		Machine Machine
+		User    user.User
+		Changes Changes
+		Advisories
 	}
 
 	// ScratchContext represents an isolated copy of a project's source code
