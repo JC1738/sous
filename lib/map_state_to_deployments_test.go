@@ -49,6 +49,8 @@ func makeTestDefs() Defs {
 	}
 }
 
+var omalleyReadyURI = "/ow/baby"
+
 func makeTestManifests() Manifests {
 	return NewManifests(
 		&Manifest{
@@ -73,6 +75,9 @@ func makeTestManifests() Manifests {
 							"name":      "O'Malley",
 						},
 						NumInstances: 2,
+						Startup: Startup{
+							CheckReadyURIPath: &omalleyReadyURI,
+						},
 					},
 				},
 				"cluster-2": {
@@ -159,6 +164,9 @@ var expectedDeployments = NewDeployments(
 				"name":      "O'Malley",
 			},
 			NumInstances: 2,
+			Startup: Startup{
+				CheckReadyURIPath: &omalleyReadyURI,
+			},
 		},
 	},
 	&Deployment{

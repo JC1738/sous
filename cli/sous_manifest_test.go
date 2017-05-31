@@ -61,5 +61,38 @@ func TestManifestSet(t *testing.T) {
 	upManifest, present := state.Manifests.Get(mid)
 	require.True(t, present)
 	assert.Equal(t, upManifest.Flavor, "vanilla")
+}
 
+func TestManifestYAML(t *testing.T) {
+	uripath := "certainly/i/am/healthy"
+
+	manifest := &sous.Manifest{
+		Source: sous.SourceLocation{Repo: "gh"},
+		Owners: []string{"sam", "judson"},
+		Kind:   sous.ManifestKindService,
+		Deployments: sous.DeploySpecs{
+			"ci": sous.DeploySpec{
+				DeployConfig: sous.DeployConfig{
+					Resources: sous.Resources{
+						"cpus":   "0.1",
+						"memory": "100",
+						"ports":  "1",
+					},
+					Startup: sous.Startup{
+						CheckReadyURIPath: &uripath,
+					},
+				},
+			},
+		},
+	}
+
+	yml, err := yaml.Marshal(manifest)
+	require.NoError(t, err)
+	assert.Regexp(t, "(?i).*checkready.*", string(yml))
+
+	newM := sous.Manifest{}
+	err = yaml.Unmarshal(yml, &newM)
+	require.NoError(t, err)
+
+	assert.Equal(t, *newM.Deployments["ci"].Startup.CheckReadyURIPath, uripath)
 }
