@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/opentable/sous/graph"
 	"github.com/opentable/sous/lib"
 	"github.com/opentable/sous/util/firsterr"
@@ -89,7 +90,7 @@ func (pmh *PUTManifestHandler) Exchange() (interface{}, int) {
 
 	flaws := m.Validate()
 	if len(flaws) > 0 {
-		pmh.Vomit.Printf("%#v", flaws)
+		pmh.Vomit.Print(spew.Sdump(flaws))
 		return "Invalid manifest", http.StatusBadRequest
 	}
 	pmh.State.Manifests.Set(mid, m)

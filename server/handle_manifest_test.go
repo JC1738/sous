@@ -125,10 +125,26 @@ func TestHandlesManifestPut(t *testing.T) {
 	})
 	writer := graph.StateWriter{StateWriter: &sous.DummyStateManager{State: state}}
 
+	uripath := "certainly/i/am/healthy"
+
 	manifest := &sous.Manifest{
 		Source: sous.SourceLocation{Repo: "gh"},
 		Owners: []string{"sam", "judson"},
 		Kind:   sous.ManifestKindService,
+		Deployments: sous.DeploySpecs{
+			"ci": sous.DeploySpec{
+				DeployConfig: sous.DeployConfig{
+					Resources: sous.Resources{
+						"cpus":   "0.1",
+						"memory": "100",
+						"ports":  "1",
+					},
+					Startup: sous.Startup{
+						CheckReadyURIPath: &uripath,
+					},
+				},
+			},
+		},
 	}
 	buf := &bytes.Buffer{}
 	enc := json.NewEncoder(buf)
@@ -136,11 +152,15 @@ func TestHandlesManifestPut(t *testing.T) {
 	req, err := http.NewRequest("PUT", "", buf)
 	require.NoError(err)
 
+	sous.Log.BeChatty()
+	defer sous.Log.BeQuiet()
+
 	th := &PUTManifestHandler{
 		Request:     req,
 		StateWriter: writer,
 		State:       state,
 		QueryValues: &restful.QueryValues{q},
+		LogSet:      &sous.Log,
 	}
 
 	data, status := th.Exchange()
@@ -148,6 +168,7 @@ func TestHandlesManifestPut(t *testing.T) {
 	require.IsType(&sous.Manifest{}, data)
 	assert.Len(data.(*sous.Manifest).Owners, 2)
 	assert.Equal(data.(*sous.Manifest).Owners[1], "judson")
+	assert.Equal(*data.(*sous.Manifest).Deployments["ci"].Startup.CheckReadyURIPath, uripath)
 
 	changed, found := state.Manifests.Get(sous.ManifestID{Source: sous.SourceLocation{Repo: "gh"}})
 	require.True(found)
