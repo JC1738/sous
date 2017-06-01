@@ -3,6 +3,7 @@ package cli
 import (
 	"flag"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/opentable/sous/config"
 	"github.com/opentable/sous/graph"
 	sous "github.com/opentable/sous/lib"
@@ -15,6 +16,7 @@ type SousManifestGet struct {
 	config.DeployFilterFlags
 	graph.TargetManifestID
 	*sous.State
+	*sous.LogSet
 	graph.OutWriter
 	*sous.ResolveFilter
 }
@@ -40,6 +42,7 @@ func (smg *SousManifestGet) Execute(args []string) cmdr.Result {
 	if !present {
 		return EnsureErrorResult(errors.Errorf("No manifest matched by %v yet. See `sous init`", smg.ResolveFilter))
 	}
+	smg.Vomit.Print(spew.Sdump(mani))
 
 	yml, err := yaml.Marshal(mani)
 	if err != nil {

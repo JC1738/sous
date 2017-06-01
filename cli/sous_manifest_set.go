@@ -4,6 +4,7 @@ import (
 	"flag"
 	"io/ioutil"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/opentable/sous/config"
 	"github.com/opentable/sous/graph"
 	sous "github.com/opentable/sous/lib"
@@ -19,6 +20,7 @@ type SousManifestSet struct {
 	graph.StateWriter
 	graph.InReader
 	*sous.ResolveFilter
+	*sous.LogSet
 	User sous.User
 }
 
@@ -57,6 +59,7 @@ func (smg *SousManifestSet) Execute(args []string) cmdr.Result {
 	if err != nil {
 		return EnsureErrorResult(err)
 	}
+	smg.Vomit.Print(spew.Sdump(yml))
 	smg.State.Manifests.Set(mid, &yml)
 	err = smg.StateWriter.WriteState(smg.State, smg.User)
 	if err != nil {

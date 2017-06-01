@@ -3,6 +3,7 @@ package sous
 import (
 	"fmt"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/pkg/errors"
 )
 
@@ -107,7 +108,7 @@ func (dc *DeployConfig) Repair(fs []Flaw) error {
 }
 
 func (dc *DeployConfig) String() string {
-	return fmt.Sprintf("#%d %+v : %+v %+v", dc.NumInstances, dc.Resources, dc.Env, dc.Volumes)
+	return fmt.Sprintf("#%d %s %+v : %+v %+v", dc.NumInstances, spew.Sprintf("%v", dc.Startup), dc.Resources, dc.Env, dc.Volumes)
 }
 
 // Equal is used to compare DeployConfigs
@@ -149,8 +150,46 @@ func (dc *DeployConfig) Diff(o DeployConfig) (bool, []string) {
 			diffs = append(diffs, fmt.Sprintf("volumes; this: %v; other: %v", dc.Volumes, o.Volumes))
 		}
 	}
+	diffs = append(diffs, dc.Startup.diff(o.Startup)...)
 	// TODO: Compare Args
 	return len(diffs) == 0, diffs
+}
+
+func (s Startup) diff(o Startup) []string {
+	diffs := []string{}
+	diff := func(format string, a ...interface{}) { diffs = append(diffs, fmt.Sprintf(format, a...)) }
+
+	if s.CheckReadyURIPath != nil {
+		if *s.CheckReadyURIPath != *o.CheckReadyURIPath {
+			diff("CheckReadyURIPath; this %q, other %q", *s.CheckReadyURIPath, *o.CheckReadyURIPath)
+		}
+	} else {
+		if o.CheckReadyURIPath != nil {
+			diff("CheckReadyURIPath; this empty, other %q", *o.CheckReadyURIPath)
+		}
+	}
+
+	if s.CheckReadyURITimeout != nil {
+		if *s.CheckReadyURITimeout != *o.CheckReadyURITimeout {
+			diff("CheckReadyURITimeout; this %q, other %q", *s.CheckReadyURITimeout, *o.CheckReadyURITimeout)
+		}
+	} else {
+		if o.CheckReadyURITimeout != nil {
+			diff("CheckReadyURITimeout; this empty, other %q", *o.CheckReadyURITimeout)
+		}
+	}
+
+	if s.Timeout != nil {
+		if *s.Timeout != *o.Timeout {
+			diff("Timeout; this %q, other %q", *s.Timeout, *o.Timeout)
+		}
+	} else {
+		if o.Timeout != nil {
+			diff("Timeout; this empty, other %q", *o.Timeout)
+		}
+	}
+
+	return diffs
 }
 
 // Clone returns a deep copy of this DeployConfig.

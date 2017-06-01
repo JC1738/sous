@@ -35,6 +35,10 @@ type (
 	}
 )
 
+func (spec DeploySpec) String() string {
+	return fmt.Sprintf("%v %s", spec.Version, spec.DeployConfig.String())
+}
+
 // Validate implements Flawed for State
 func (spec DeploySpec) Validate() []Flaw {
 	return spec.DeployConfig.Validate()
