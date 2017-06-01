@@ -9,6 +9,7 @@ import (
 
 func TestManifest_Clone(t *testing.T) {
 	orignalVersion := semv.MustParse("1")
+	crutime := 1234
 	original := &Manifest{
 		Kind:   ManifestKindService,
 		Owners: []string{"some", "owners"},
@@ -21,6 +22,9 @@ func TestManifest_Clone(t *testing.T) {
 						"ports":  "1",
 					},
 					NumInstances: 3,
+					Startup: Startup{
+						CheckReadyURITimeout: &crutime,
+					},
 				},
 				Version: orignalVersion,
 			},
@@ -28,6 +32,10 @@ func TestManifest_Clone(t *testing.T) {
 	}
 
 	clone := original.Clone()
+
+	if areDiff, diffs := original.Diff(clone); areDiff {
+		t.Errorf("Original reports differences from clone: %v", diffs)
+	}
 
 	if clone.Kind != ManifestKindService {
 		t.Errorf("Kind didn't match orignal")

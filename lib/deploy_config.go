@@ -160,7 +160,9 @@ func (s Startup) diff(o Startup) []string {
 	diff := func(format string, a ...interface{}) { diffs = append(diffs, fmt.Sprintf(format, a...)) }
 
 	if s.CheckReadyURIPath != nil {
-		if *s.CheckReadyURIPath != *o.CheckReadyURIPath {
+		if o.CheckReadyURIPath == nil {
+			diff("CheckReadyURIPath; this %q, other empty", *s.CheckReadyURIPath)
+		} else if *s.CheckReadyURIPath != *o.CheckReadyURIPath {
 			diff("CheckReadyURIPath; this %q, other %q", *s.CheckReadyURIPath, *o.CheckReadyURIPath)
 		}
 	} else {
@@ -170,22 +172,26 @@ func (s Startup) diff(o Startup) []string {
 	}
 
 	if s.CheckReadyURITimeout != nil {
-		if *s.CheckReadyURITimeout != *o.CheckReadyURITimeout {
-			diff("CheckReadyURITimeout; this %q, other %q", *s.CheckReadyURITimeout, *o.CheckReadyURITimeout)
+		if o.CheckReadyURITimeout == nil {
+			diff("CheckReadyURITimeout; this %d, other empty", *s.CheckReadyURITimeout)
+		} else if *s.CheckReadyURITimeout != *o.CheckReadyURITimeout {
+			diff("CheckReadyURITimeout; this %d, other %d", *s.CheckReadyURITimeout, *o.CheckReadyURITimeout)
 		}
 	} else {
 		if o.CheckReadyURITimeout != nil {
-			diff("CheckReadyURITimeout; this empty, other %q", *o.CheckReadyURITimeout)
+			diff("CheckReadyURITimeout; this empty, other %d", *o.CheckReadyURITimeout)
 		}
 	}
 
 	if s.Timeout != nil {
-		if *s.Timeout != *o.Timeout {
-			diff("Timeout; this %q, other %q", *s.Timeout, *o.Timeout)
+		if o.Timeout == nil {
+			diff("Timeout; this %d, other empty", *s.Timeout)
+		} else if *s.Timeout != *o.Timeout {
+			diff("Timeout; this %d, other %d", *s.Timeout, *o.Timeout)
 		}
 	} else {
 		if o.Timeout != nil {
-			diff("Timeout; this empty, other %q", *o.Timeout)
+			diff("Timeout; this empty, other %d", *o.Timeout)
 		}
 	}
 
@@ -212,6 +218,22 @@ func (dc DeployConfig) Clone() (c DeployConfig) {
 		}
 	}
 	c.Volumes = dc.Volumes.Clone()
+
+	if dc.Startup.CheckReadyURIPath != nil {
+		uripath := *dc.Startup.CheckReadyURIPath
+		c.Startup.CheckReadyURIPath = &uripath
+	}
+
+	if dc.Startup.CheckReadyURITimeout != nil {
+		crtimeout := *dc.Startup.CheckReadyURITimeout
+		c.Startup.CheckReadyURITimeout = &crtimeout
+	}
+
+	if dc.Startup.Timeout != nil {
+		timeout := *dc.Startup.Timeout
+		c.Startup.Timeout = &timeout
+	}
+
 	return
 }
 
@@ -302,6 +324,16 @@ func flattenDeployConfigs(dcs []DeployConfig) DeployConfig {
 			if _, set := dc.Metadata[n]; !set {
 				dc.Metadata[n] = v
 			}
+		}
+
+		if dc.Startup.CheckReadyURIPath == nil {
+			dc.Startup.CheckReadyURIPath = c.Startup.CheckReadyURIPath
+		}
+		if dc.Startup.CheckReadyURITimeout == nil {
+			dc.Startup.CheckReadyURITimeout = c.Startup.CheckReadyURITimeout
+		}
+		if dc.Startup.Timeout == nil {
+			dc.Startup.Timeout = c.Startup.Timeout
 		}
 	}
 	return dc
