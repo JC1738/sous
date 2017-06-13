@@ -61,7 +61,7 @@ func setupConfig(t *testing.T) templatedConfigs {
 
 	stateDir := filepath.Join(workdir, "gdm")
 
-	exePATH, err := shelltest.BuildPath("go", "git", "ssh", "cp", "egrep", "bash")
+	exePATH, err := shelltest.BuildPath("go", "git", "ssh", "cp", "egrep", "bash", "gcc")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -119,7 +119,9 @@ func buildShell(name string, t *testing.T) *shelltest.ShellTest {
 	}
 
 	shell := shelltest.New(t, name, cfg,
-		shelltest.WithHostEnv([]string{"DOCKER_HOST", "DOCKER_TLS_VERIFY", "DOCKER_CERT_PATH", "GOROOT"},
+		shelltest.WithHostEnv([]string{"DOCKER_HOST", "DOCKER_TLS_VERIFY", "DOCKER_CERT_PATH", "GOROOT", "CC", "CXX",
+			"CC", "CONFIG_SHELL", "CXX", "NIX_BUILD_CORES", "NIX_CC", "NIX_CFLAGS_COMPILE", "NIX_ENFORCE_NO_NATIVE", "NIX_LDFLAGS", "NIX_STORE", "PYTHONPATH", "TEMP", "TEMPDIR", "_PATH", "bin", "buildInputs", "builder", "checkPhase", "goPackagePath", "outputs", "preFixup", "shell", "shellHook",
+			"LD_LIBRARY_PATH", "LIBEXEC_PATH"},
 			map[string]string{
 				"HOME":       cfg.Homedir,
 				"XDG_CONFIG": cfg.XDGConfig,
@@ -143,6 +145,7 @@ func TestShellLevelIntegration(t *testing.T) {
 	}
 
 	preconditions := shell.Block("Preconditions for CLI integration tests", `
+	env
 	if [ -n "$GOROOT" ]; then
 		mkdir -p $GOROOT
 	fi

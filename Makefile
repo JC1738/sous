@@ -142,7 +142,7 @@ coverage: $(COVER_DIR)
 legendary: coverage
 	legendary --hitlist .cadre/coverage.vim /tmp/sous-cover/*_merged.txt
 
-test: test-gofmt test-staticcheck test-unit test-integration 
+test: test-gofmt test-staticcheck test-unit test-integration
 
 test-staticcheck: install-staticcheck
 	staticcheck -ignore "$$(cat staticcheck.ignore)" $(SOUS_PACKAGES)
@@ -180,11 +180,11 @@ $(RELEASE_DIRS):
 
 artifacts/$(DARWIN_RELEASE_DIR)/sous: $(DARWIN_RELEASE_DIR) $(BIN_DIR) install-build-tools
 	xgo $(CONCAT_XGO_ARGS) --targets=darwin/amd64  ./
-	mv $(BIN_DIR)/sous-darwin-10.6-amd64 $@
+	mv -f $(BIN_DIR)/sous-darwin-10.6-amd64 $@
 
 artifacts/$(LINUX_RELEASE_DIR)/sous: $(LINUX_RELEASE_DIR) $(BIN_DIR) install-build-tools
 	xgo $(CONCAT_XGO_ARGS) --targets=linux/amd64  ./
-	mv $(BIN_DIR)/sous-linux-amd64 $@
+	mv -f $(BIN_DIR)/sous-linux-amd64 $@
 
 artifacts/$(LINUX_TARBALL): artifacts/$(LINUX_RELEASE_DIR)/sous
 	cd artifacts && tar czv $(LINUX_RELEASE_DIR) > $(LINUX_TARBALL)
