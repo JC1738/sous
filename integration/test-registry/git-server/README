@@ -1,0 +1,19 @@
+If you need to manipulate the Git repos in this test environment, here are clues about how to do it:
+
+First,
+`docker run  -p 2222:22 testregistry_gitserver:latest`
+(or `docker-compose up`)
+
+
+Then:
+`repo-reset.sh [IP of docker host (if not localhost)]`
+
+Reverts any unintentional changes to the docker repos.
+
+`git -c core.sshcommand=$(pwd)/ssh_wrapper clone ssh://root@127.0.0.1:2222/repos/sous-server /tmp/sous-server`
+The sshcommand is important, for reasons too tedious to recount.
+
+Use the `git -c core.sshcommand` formula for `push` as well.
+
+Finally:
+`repo-snapshot.sh [IP again]`
