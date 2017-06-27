@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/opentable/sous/util/shell"
 )
@@ -11,8 +12,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	sh.TeeEcho = os.Stdout
+	sh.LongRunning(true)
 
-	std, err := sh.Stderr("pv", "--name", "gotest", "-f", "-t", "-i", "0.0001")
+	std, err := sh.Stdout("docker", "build", "--pull", "service")
 	fmt.Println(std, err)
 
 }
