@@ -98,10 +98,10 @@ type (
 		Done()
 	}
 
-	// Something like a WriteCloser, but the Done message also asserts that something useful was written
-	// After a console message has been written, the Done method is called, so
-	// that the WriteDoner can report about badly formed or missing console
-	// messages.
+	// A WriteDoner is Something like a WriteCloser, but the Done message also
+	// asserts that something useful was written After a console message has been
+	// written, the Done method is called, so that the WriteDoner can report
+	// about badly formed or missing console messages.
 	// xxx this facility is preliminary, and Sous doesn't yet record these errors.
 	WriteDoner interface {
 		io.Writer

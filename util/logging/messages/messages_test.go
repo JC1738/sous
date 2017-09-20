@@ -10,7 +10,7 @@ import (
 )
 
 func TestReportCHResponseFields(t *testing.T) {
-	logger, control := logging.NewLogSinkSpy()
+	logger, control := logging.NewLogSinkBundle()
 	msg := newClientHTTPResponse("GET", "http://example.com/api?a=a", 200, 0, 123, time.Millisecond*30)
 	logging.Deliver(msg, logger)
 

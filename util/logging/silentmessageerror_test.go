@@ -7,7 +7,7 @@ import (
 )
 
 func TestSilentMessageError(t *testing.T) {
-	log, ctrl := NewLogSinkSpy()
+	log, ctrl := NewLogSinkBundle()
 	reportSilentMessage(log, struct{}{})
 
 	if assert.Len(t, ctrl.CallsTo("Console"), 1) {

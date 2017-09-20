@@ -26,6 +26,7 @@ type Config struct {
 	}
 }
 
+// Equal compares values of Config.
 func (cfg Config) Equal(other Config) bool {
 	if cfg.Kafka.Enabled != other.Kafka.Enabled {
 		return false
@@ -59,7 +60,7 @@ func (cfg Config) Equal(other Config) bool {
 	return true
 }
 
-// Gets the basic level of logging for this configuration.
+// GetBasicLevel gets the basic level of logging for this configuration.
 // that is, the level of messages that would be logged that should be emitted to the console
 // this is separate from messages that are designed for human consumption
 func (cfg Config) GetBasicLevel() Level {

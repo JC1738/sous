@@ -245,20 +245,22 @@ func (ls LogSet) Console() WriteDoner {
 }
 
 // xxx phase 2 of complete transition: remove these methods in favor of specific messages
-// Vomitf is a simple wrapper on Vomit.Printf
+
+// Vomitf is a wrapper that does formats log entries and emits them at ExtraDebug1Level
 func (ls LogSet) Vomitf(f string, as ...interface{}) { ls.vomitf(f, as...) }
 func (ls LogSet) vomitf(f string, as ...interface{}) {
 	m := NewGenericMsg(ExtraDebug1Level, fmt.Sprintf(f, as...), nil)
 	Deliver(m, ls)
 }
 
-// Debugf is a simple wrapper on Debug.Printf
+// Debugf is a wrapper that does formats log entries and emits them at DebugLevel
 func (ls LogSet) Debugf(f string, as ...interface{}) { ls.debugf(f, as...) }
 func (ls LogSet) debugf(f string, as ...interface{}) {
 	m := NewGenericMsg(DebugLevel, fmt.Sprintf(f, as...), nil)
 	Deliver(m, ls)
 }
 
+// Warnf is a wrapper that does formats log entries and emits them at WarningLevel
 func (ls LogSet) Warnf(f string, as ...interface{}) { ls.warnf(f, as...) }
 func (ls LogSet) warnf(f string, as ...interface{}) {
 	m := NewGenericMsg(WarningLevel, fmt.Sprintf(f, as...), nil)
