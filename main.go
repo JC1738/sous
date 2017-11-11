@@ -19,30 +19,26 @@ var Sous = &cli.Sous{
 }
 
 func main() {
+	exitCode := action()
+	os.Exit(exitCode)
+}
+
+func action() int {
 	defer handlePanic()
-	// Eventually, these should become flags on the top level application
-	//logging.Log.Info.SetOutput(os.Stderr)
-	//logging.Log.Debug.SetOutput(os.Stderr)
 	log.SetFlags(log.Flags() | log.Lshortfile)
 
 	ls := logging.NewLogSet(Sous.Version, "sous", "", os.Stderr)
 	defer ls.AtExit()
+
 	di := graph.BuildGraph(Sous.Version, ls, os.Stdin, os.Stdout, os.Stderr)
 	c, err := cli.NewSousCLI(di, Sous, ls, os.Stdout, os.Stderr)
 	if err != nil {
-		die(err)
+		fmt.Fprintln(os.Stderr, err)
+		return 70
 	}
 
 	result := c.Invoke(os.Args)
-	exitCode := result.ExitCode()
-
-	os.Exit(exitCode)
-}
-
-// die is only used to exit during very early initialisation
-func die(v ...interface{}) {
-	fmt.Fprintln(os.Stderr, v...)
-	os.Exit(70)
+	return result.ExitCode()
 }
 
 // handlePanic gives us one last chance to send a message to the user in case a
