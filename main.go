@@ -48,6 +48,10 @@ func handlePanic() {
 	if os.Getenv("DEBUG") == "YES" {
 		return
 	}
+	if pmsg := recover(); pmsg == nil {
+		return
+	}
+
 	fmt.Println(panicMessage)
 	fmt.Printf("Sous Version: %s\n\n", Version)
 }
