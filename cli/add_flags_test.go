@@ -196,6 +196,7 @@ func TestAddFlags_badInputs(t *testing.T) {
 }
 
 func testError(fs *flag.FlagSet, tgt interface{}, help string, expected string, t *testing.T) {
+	t.Helper()
 	in := AddFlagsInput{fs, tgt, help}
 	actualErr := AddFlags(in.FlagSet, in.Target, in.Help)
 	if actualErr == nil {
