@@ -187,7 +187,8 @@ func TestAddFlags_badInputs(t *testing.T) {
 	testError(newFS(), "", "", "target is string; want pointer to struct", t)
 	testError(newFS(), config.DeployFilterFlags{}, "", "target is config.DeployFilterFlags; want pointer to struct", t)
 	testError(newFS(), stringPtr, "", "target is *string; want pointer to struct", t)
-	testError(newFS(), &BadFlagStruct{}, "\t-ptrfield\n\tblah", "target field cli.BadFlagStruct.PtrField is *string; want string, int, or bool", t)
+	testError(newFS(), &BadFlagStruct{}, "\t-ptrfield\n\tblah",
+		"target field cli.BadFlagStruct.PtrField is *string; want string, int, or bool", t)
 
 	if err := AddFlags(newFS(), &config.DeployFilterFlags{}, ""); err != nil { // Not:  "no usage text for flag -repo", t)
 		t.Errorf("got error %q; want no error", err)
