@@ -241,7 +241,7 @@ func (r *deployer) RectifySingleModification(pair *sous.DeployablePair) (err err
 	}
 
 	if changesDep(pair) {
-		Log.Debug.Printf("Deploying...")
+		Log.Debug.Printf("Deploying... %q to %q", pair.Prior.ID(), pair.Post.ID())
 		if err := r.Client.Deploy(*pair.Post, reqID); err != nil {
 			Log.Warn.Println(err)
 			return err
@@ -253,6 +253,8 @@ func (r *deployer) RectifySingleModification(pair *sous.DeployablePair) (err err
 
 	if !changesApplied {
 		Log.Warn.Printf("No changes applied to Singularity for %q", pair.ID())
+	} else {
+		Log.Debug.Printf("Updated Singularity for %q", pair.ID())
 	}
 
 	return nil
