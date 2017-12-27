@@ -67,21 +67,25 @@ func updateRetryLoop(ls logging.LogSink,
 	for tries := 0; tries < tryLimit; tries++ {
 		logging.Deliver(newUpdateBeginMessage(tries, sid, did, user, start), ls)
 
-		state, err := sm.ReadState()
-		if err != nil {
+		var state *sous.State
+		var err error
+		var ok bool
+		var manifest *sous.Manifest
+		var gdm sous.Deployments
+
+		if state, err = sm.ReadState(); err != nil {
 			return sous.NewDeployments(), err
 		}
-		manifest, ok := state.Manifests.Get(mid)
-		if !ok {
-			err := fmt.Errorf("No manifest found for %q - try 'sous init' first.", mid)
+
+		if manifest, ok = state.Manifests.Get(mid); !ok {
+			err = fmt.Errorf("no manifest found for %q - try 'sous init' first", mid)
 			logging.Deliver(newUpdateErrorMessage(tries, sid, did, user, start, err), ls)
 			return sous.NewDeployments(), err
 		}
 
 		tryLimit = len(manifest.Deployments)
 
-		gdm, err := state.Deployments()
-		if err != nil {
+		if gdm, err = state.Deployments(); err != nil {
 			logging.Deliver(newUpdateErrorMessage(tries, sid, did, user, start, err), ls)
 			return sous.NewDeployments(), err
 		}
@@ -90,6 +94,7 @@ func updateRetryLoop(ls logging.LogSink,
 			logging.Deliver(newUpdateErrorMessage(tries, sid, did, user, start, err), ls)
 			return sous.NewDeployments(), err
 		}
+
 		if err := sm.WriteState(state, user); err != nil {
 			if !restful.Retryable(err) {
 				logging.Deliver(newUpdateErrorMessage(tries, sid, did, user, start, err), ls)
@@ -103,7 +108,7 @@ func updateRetryLoop(ls logging.LogSink,
 		return gdm, nil
 	}
 
-	err := errors.Errorf("Tried %d to update %v - %v", tryLimit, sid, did)
+	err := errors.Errorf("tried %d to update %v - %v", tryLimit, sid, did)
 	logging.Deliver(newUpdateErrorMessage(tryLimit, sid, did, user, start, err), ls)
 	return sous.NewDeployments(), err
 }

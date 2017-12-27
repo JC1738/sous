@@ -44,20 +44,21 @@ func (ss *Server) Do() error {
 }
 
 func ensureGDMExists(repo, localPath string, log func(string, ...interface{})) error {
-	s, err := os.Stat(localPath)
-	if err == nil && s.IsDir() {
-		files, err := ioutil.ReadDir(localPath)
-		if err != nil {
+
+	if s, err := os.Stat(localPath); err == nil && s.IsDir() {
+		if files, err := ioutil.ReadDir(localPath); err != nil {
 			return err
-		}
-		if len(files) != 0 {
+		} else if len(files) != 0 {
+
 			// The directory exists and is not empty, do nothing.
 			if repo != "" {
 				log("not pulling repo %q; directory already exist and is not empty: %q", repo, localPath)
 			}
+
 			return nil
 		}
 	}
+
 	if err := config.EnsureDirExists(localPath); err != nil {
 		return err
 	}
