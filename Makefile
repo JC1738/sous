@@ -76,6 +76,7 @@ help:
 	@echo "make test-integration: integration tests"
 	@echo "make test-staticcheck: runs static code analysis against project packages."
 	@echo "make wip: puts a marker file into workspace to prevent Travis from passing the build."
+	@echo "make build-debug: builds a linux debug version "
 	@echo
 	@echo "Add VERBOSE=1 for tons of extra output."
 
