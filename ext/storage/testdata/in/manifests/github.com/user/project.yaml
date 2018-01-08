@@ -6,7 +6,7 @@ Deployments:
   other-cluster:
     Resources:
       cpus: "1"
-      memory: 256MB
+      memory: "256"
       ports: "1"
     Env:
       DEBUG: "YES"

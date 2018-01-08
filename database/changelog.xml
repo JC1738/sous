@@ -1,6 +1,10 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
-    <changeSet author="judson (generated)" id="1513627199847-1">
+    <changeSet author="judson" id="1">
+      <sql>create type lifecycle_state as enum('active','decommissioned')</sql>
+      <rollback>drop type lifecycle_state</rollback>
+    </changeSet>
+    <changeSet author="judson (generated)" id="1513795697969-1">
         <createTable tableName="cluster_qualities">
             <column autoIncrement="true" name="cluster_quality_id" type="SERIAL">
                 <constraints primaryKey="true" primaryKeyName="cluster_qualities_pkey"/>
@@ -13,7 +17,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-2">
+    <changeSet author="judson (generated)" id="1513795697969-2">
         <createTable tableName="clusters">
             <column autoIncrement="true" name="cluster_id" type="SERIAL">
                 <constraints primaryKey="true" primaryKeyName="clusters_pkey"/>
@@ -51,7 +55,7 @@
             <column name="crdef_failure_statuses" type="_INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="crdef_url_timeout" type="INT">
+            <column name="crdef_uri_timeout" type="INT">
                 <constraints nullable="false"/>
             </column>
             <column name="crdef_interval" type="INT">
@@ -62,7 +66,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-3">
+    <changeSet author="judson (generated)" id="1513795697969-3">
         <createTable tableName="component_owners">
             <column autoIncrement="true" name="component_owner_id" type="SERIAL">
                 <constraints primaryKey="true" primaryKeyName="component_owners_pkey"/>
@@ -75,7 +79,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-4">
+    <changeSet author="judson (generated)" id="1513795697969-4">
         <createTable tableName="components">
             <column autoIncrement="true" name="component_id" type="SERIAL">
                 <constraints primaryKey="true" primaryKeyName="components_pkey"/>
@@ -94,10 +98,16 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-5">
+    <changeSet author="judson (generated)" id="1513795697969-5">
         <createTable tableName="deployments">
             <column autoIncrement="true" name="deployment_id" type="SERIAL">
                 <constraints primaryKey="true" primaryKeyName="deployments_pkey"/>
+            </column>
+            <column name="cluster_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="component_id" type="INT">
+                <constraints nullable="false"/>
             </column>
             <column name="versionstring" type="TEXT">
                 <constraints nullable="false"/>
@@ -107,6 +117,9 @@
             </column>
             <column name="schedule_string" type="TEXT">
                 <constraints nullable="false"/>
+            </column>
+            <column name="lifecycle" type="lifecycle_state">
+              <constraints nullable="false"/>
             </column>
             <column name="cr_proto" type="TEXT">
                 <constraints nullable="false"/>
@@ -141,18 +154,15 @@
             <column name="cr_skip" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
-            <column name="cluster_id" type="INT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="components_id" type="INT">
-                <constraints nullable="false"/>
-            </column>
         </createTable>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-6">
+    <changeSet author="judson (generated)" id="1513795697969-6">
         <createTable tableName="env_defaults">
             <column autoIncrement="true" name="env_default_id" type="SERIAL">
                 <constraints primaryKey="true" primaryKeyName="env_defaults_pkey"/>
+            </column>
+            <column name="cluster_id" type="INT">
+                <constraints nullable="false"/>
             </column>
             <column name="key" type="TEXT">
                 <constraints nullable="false"/>
@@ -160,14 +170,46 @@
             <column name="value" type="TEXT">
                 <constraints nullable="false"/>
             </column>
-            <column name="cluster_id" type="INT">
+        </createTable>
+    </changeSet>
+    <changeSet author="judson (generated)" id="1513795697969-7">
+        <createTable tableName="env_var_defs">
+            <column autoIncrement="true" name="env_var_def_id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="env_var_defs_pkey"/>
+            </column>
+            <column name="name" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="desc" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="scope" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="TEXT">
                 <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-7">
-        <createTable tableName="env_fdefs">
-            <column autoIncrement="true" name="env_fdef_id" type="SERIAL">
+    <changeSet author="judson (generated)" id="1513795697969-8">
+        <createTable tableName="envs">
+            <column autoIncrement="true" name="env_id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="envs_pkey"/>
+            </column>
+            <column name="deployment_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="key" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="judson (generated)" id="1513795697969-9">
+        <createTable tableName="metadata_fdefs">
+            <column autoIncrement="true" name="metadata_fdef_id" type="SERIAL">
                 <constraints primaryKey="true" primaryKeyName="env_fdefs_pkey"/>
             </column>
             <column name="field_name" type="TEXT">
@@ -179,26 +221,13 @@
             <column name="default_value" type="TEXT"/>
         </createTable>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-8">
-        <createTable tableName="envs">
-            <column autoIncrement="true" name="env_id" type="SERIAL">
-                <constraints primaryKey="true" primaryKeyName="envs_pkey"/>
-            </column>
-            <column name="key" type="TEXT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="value" type="TEXT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="deployment_id" type="INT">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-9">
+    <changeSet author="judson (generated)" id="1513795697969-10">
         <createTable tableName="metadatas">
             <column autoIncrement="true" name="metadata_id" type="SERIAL">
                 <constraints primaryKey="true" primaryKeyName="metadatas_pkey"/>
+            </column>
+            <column name="deployment_id" type="INT">
+                <constraints nullable="false"/>
             </column>
             <column name="name" type="TEXT">
                 <constraints nullable="false"/>
@@ -206,12 +235,9 @@
             <column name="value" type="TEXT">
                 <constraints nullable="false"/>
             </column>
-            <column name="deployment_id" type="INT">
-                <constraints nullable="false"/>
-            </column>
         </createTable>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-10">
+    <changeSet author="judson (generated)" id="1513795697969-11">
         <createTable tableName="owners">
             <column autoIncrement="true" name="owner_id" type="SERIAL">
                 <constraints primaryKey="true" primaryKeyName="owners_pkey"/>
@@ -221,7 +247,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-11">
+    <changeSet author="judson (generated)" id="1513795697969-12">
         <createTable tableName="qualities">
             <column autoIncrement="true" name="quality_id" type="SERIAL">
                 <constraints primaryKey="true" primaryKeyName="qualities_pkey"/>
@@ -234,7 +260,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-12">
+    <changeSet author="judson (generated)" id="1513795697969-13">
         <createTable tableName="resource_fdefs">
             <column autoIncrement="true" name="resource_fdef_id" type="SERIAL">
                 <constraints primaryKey="true" primaryKeyName="resource_fdefs_pkey"/>
@@ -248,10 +274,13 @@
             <column name="default_value" type="TEXT"/>
         </createTable>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-13">
+    <changeSet author="judson (generated)" id="1513795697969-14">
         <createTable tableName="resources">
             <column autoIncrement="true" name="resource_id" type="SERIAL">
                 <constraints primaryKey="true" primaryKeyName="resources_pkey"/>
+            </column>
+            <column name="deployment_id" type="INT">
+                <constraints nullable="false"/>
             </column>
             <column name="resource_name" type="TEXT">
                 <constraints nullable="false"/>
@@ -259,15 +288,15 @@
             <column name="resource_value" type="TEXT">
                 <constraints nullable="false"/>
             </column>
-            <column name="deployment_id" type="INT">
-                <constraints nullable="false"/>
-            </column>
         </createTable>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-14">
+    <changeSet author="judson (generated)" id="1513795697969-15">
         <createTable tableName="volumes">
             <column autoIncrement="true" name="volume_id" type="SERIAL">
                 <constraints primaryKey="true" primaryKeyName="volumes_pkey"/>
+            </column>
+            <column name="deployment_id" type="INT">
+                <constraints nullable="false"/>
             </column>
             <column name="host" type="TEXT">
                 <constraints nullable="false"/>
@@ -278,42 +307,78 @@
             <column name="mode" type="TEXT">
                 <constraints nullable="false"/>
             </column>
-            <column name="deployment_id" type="INT">
-                <constraints nullable="false"/>
-            </column>
         </createTable>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-15">
+    <changeSet author="judson (generated)" id="1513795697969-16">
+        <addUniqueConstraint columnNames="cluster_id, quality_id" constraintName="cluster_qualities_unique_pairs" tableName="cluster_qualities"/>
+    </changeSet>
+    <changeSet author="judson (generated)" id="1513795697969-17">
+        <addUniqueConstraint columnNames="name" constraintName="clusters_unique_name" tableName="clusters"/>
+    </changeSet>
+    <changeSet author="judson (generated)" id="1513795697969-18">
+        <addUniqueConstraint columnNames="component_id, owner_id" constraintName="component_owners_u_pairs" tableName="component_owners"/>
+    </changeSet>
+    <changeSet author="judson (generated)" id="1513795697969-19">
+        <addUniqueConstraint columnNames="repo, dir, flavor, kind" constraintName="components_unique" tableName="components"/>
+    </changeSet>
+    <changeSet author="judson (generated)" id="1513795697969-20">
+        <addUniqueConstraint columnNames="key, cluster_id" constraintName="env_defaults_u_key_cluster" tableName="env_defaults"/>
+    </changeSet>
+    <changeSet author="judson (generated)" id="1513795697969-21">
+        <addUniqueConstraint columnNames="name" constraintName="env_var_defs_unique_name" tableName="env_var_defs"/>
+    </changeSet>
+    <changeSet author="judson (generated)" id="1513795697969-22">
+        <addUniqueConstraint columnNames="key, deployment_id" constraintName="envs_u_key_dep_id" tableName="envs"/>
+    </changeSet>
+    <changeSet author="judson (generated)" id="1513795697969-23">
+        <addUniqueConstraint columnNames="field_name" constraintName="metadata_fdefs_u_name" tableName="metadata_fdefs"/>
+    </changeSet>
+    <changeSet author="judson (generated)" id="1513795697969-24">
+        <addUniqueConstraint columnNames="deployment_id, name" constraintName="metadatas_u_name_depid" tableName="metadatas"/>
+    </changeSet>
+    <changeSet author="judson (generated)" id="1513795697969-25">
+        <addUniqueConstraint columnNames="email" constraintName="owners_u_email" tableName="owners"/>
+    </changeSet>
+    <changeSet author="judson (generated)" id="1513795697969-26">
+        <addUniqueConstraint columnNames="name" constraintName="qualities_u_name" tableName="qualities"/>
+    </changeSet>
+    <changeSet author="judson (generated)" id="1513795697969-27">
+        <addUniqueConstraint columnNames="field_name" constraintName="resource_fdefs_u_name" tableName="resource_fdefs"/>
+    </changeSet>
+    <changeSet author="judson (generated)" id="1513795697969-28">
+        <addUniqueConstraint columnNames="deployment_id, resource_name" constraintName="resources_u_depid_name" tableName="resources"/>
+    </changeSet>
+    <changeSet author="judson (generated)" id="1513795697969-29">
         <addForeignKeyConstraint baseColumnNames="cluster_id" baseTableName="cluster_qualities" constraintName="cluster_qualities_cluster_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="cluster_id" referencedTableName="clusters"/>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-16">
+    <changeSet author="judson (generated)" id="1513795697969-30">
         <addForeignKeyConstraint baseColumnNames="quality_id" baseTableName="cluster_qualities" constraintName="cluster_qualities_quality_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="quality_id" referencedTableName="qualities"/>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-17">
+    <changeSet author="judson (generated)" id="1513795697969-31">
         <addForeignKeyConstraint baseColumnNames="component_id" baseTableName="component_owners" constraintName="component_owners_component_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="component_id" referencedTableName="components"/>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-18">
+    <changeSet author="judson (generated)" id="1513795697969-32">
         <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="component_owners" constraintName="component_owners_owner_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="owner_id" referencedTableName="owners"/>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-19">
+    <changeSet author="judson (generated)" id="1513795697969-33">
         <addForeignKeyConstraint baseColumnNames="cluster_id" baseTableName="deployments" constraintName="deployments_cluster_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cluster_id" referencedTableName="clusters"/>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-20">
-        <addForeignKeyConstraint baseColumnNames="components_id" baseTableName="deployments" constraintName="deployments_components_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="component_id" referencedTableName="components"/>
+    <changeSet author="judson (generated)" id="1513795697969-34">
+        <addForeignKeyConstraint baseColumnNames="component_id" baseTableName="deployments" constraintName="deployments_components_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="component_id" referencedTableName="components"/>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-21">
+    <changeSet author="judson (generated)" id="1513795697969-35">
         <addForeignKeyConstraint baseColumnNames="cluster_id" baseTableName="env_defaults" constraintName="env_defaults_cluster_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="cluster_id" referencedTableName="clusters"/>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-22">
+    <changeSet author="judson (generated)" id="1513795697969-36">
         <addForeignKeyConstraint baseColumnNames="deployment_id" baseTableName="envs" constraintName="envs_deployment_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="deployment_id" referencedTableName="deployments"/>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-23">
+    <changeSet author="judson (generated)" id="1513795697969-37">
         <addForeignKeyConstraint baseColumnNames="deployment_id" baseTableName="metadatas" constraintName="metadatas_deployment_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="deployment_id" referencedTableName="deployments"/>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-24">
+    <changeSet author="judson (generated)" id="1513795697969-38">
         <addForeignKeyConstraint baseColumnNames="deployment_id" baseTableName="resources" constraintName="resources_deployment_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="deployment_id" referencedTableName="deployments"/>
     </changeSet>
-    <changeSet author="judson (generated)" id="1513627199847-25">
+    <changeSet author="judson (generated)" id="1513795697969-39">
         <addForeignKeyConstraint baseColumnNames="deployment_id" baseTableName="volumes" constraintName="volumes_deployment_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="deployment_id" referencedTableName="deployments"/>
     </changeSet>
 </databaseChangeLog>

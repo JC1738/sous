@@ -7,11 +7,6 @@ type (
 		Prior, Post *Deployment
 		Status      DeployStatus
 	}
-	// DeploymentPairs is a list of DeploymentPair
-	DeploymentPairs []*DeploymentPair
-
-	// DeployablePairs is a list of DeployablePair
-	DeployablePairs []*DeployablePair
 
 	differ struct {
 		from map[DeploymentID]*DeployState
@@ -77,7 +72,7 @@ func newDiffer(intended Deployments) *differ {
 
 	startMap := make(map[DeploymentID]*DeployState)
 	for _, dep := range i {
-		startMap[dep.Name()] = &DeployState{Deployment: *dep}
+		startMap[dep.Name()] = &DeployState{Deployment: *dep, Status: DeployStatusActive}
 	}
 	return &differ{
 		from:            startMap,

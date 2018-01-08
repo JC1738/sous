@@ -7,7 +7,7 @@ Deployments:
   cluster-1:
     Resources:
       cpus: "0.1"
-      memory: 2GB
+      memory: "2048"
       ports: "1"
     Env:
       SOME_DB_URL: https://some.database

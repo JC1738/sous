@@ -172,7 +172,7 @@ func DeploymentsFromManifest(defs Defs, m *Manifest) (Deployments, error) {
 	for clusterName, spec := range m.Deployments {
 		cluster, ok := defs.Clusters[clusterName]
 		if !ok {
-			return ds, errors.Errorf("cluster %q is not described in defs.yaml (but specified in manifest %q)", clusterName, m.ID())
+			return ds, errors.Errorf("cluster %q doesn't have a definition (but specified in manifest %q)", clusterName, m.ID())
 		}
 		spec.clusterName = cluster.BaseURL
 		d, err := BuildDeployment(m, clusterName, cluster, spec, inherit)

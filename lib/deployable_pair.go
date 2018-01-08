@@ -45,10 +45,11 @@ func (dp *DeployablePair) Kind() DeployablePairKind {
 
 // Diffs returns the differences from Prior to Post.
 func (dp *DeployablePair) Diffs() Differences {
-	_, diffs := dp.Prior.Diff(dp.Post.Deployment)
-	if dp.Prior.Status != dp.Post.Status {
+	prior, post := dp.Prior, dp.Post
+	_, diffs := prior.Diff(post.Deployment)
+	if prior.Status != post.Status {
 		diffs = append(diffs, fmt.Sprintf("status prior: %s; post: %s",
-			dp.Prior.Status, dp.Post.Status))
+			prior.Status, post.Status))
 	}
 	return diffs
 }

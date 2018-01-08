@@ -14,6 +14,7 @@ package storage
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/opentable/hy"
 	"github.com/opentable/sous/lib"
@@ -43,6 +44,11 @@ func NewDiskStateManager(baseDir string) *DiskStateManager {
 }
 
 func repairState(s *sous.State) error {
+
+	for _, m := range s.Manifests.Snapshot() {
+		sort.Strings(m.Owners)
+	}
+
 	logging.Log.Vomit.Printf("Validating State")
 	flaws := s.Validate()
 
