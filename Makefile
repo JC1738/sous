@@ -24,7 +24,7 @@ DEV_VERSION := "$(DESC)-devbuild-$(DATE)"
 
 # Sous releases are tagged with format v0.0.0. semv library
 # does not understand the v prefix, so this lops it off.
-SOUS_VERSION := $(shell echo $(GIT_TAG) | sed 's/^v//')
+SOUS_VERSION ?= $(shell echo $(GIT_TAG) | sed 's/^v//')
 
 ifeq ($(shell git diff-index --quiet HEAD ; echo $$?),0)
 COMMIT := $(shell git rev-parse HEAD)
@@ -68,6 +68,14 @@ help:
 	@echo "make wip: puts a marker file into workspace to prevent Travis from passing the build."
 	@echo
 	@echo "Add VERBOSE=1 for tons of extra output."
+
+build-debug:
+	@if [[ $(SOUS_VERSION) != *"debug" ]]; then echo 'missing debug at the end of semv, please add'; exit -1; fi
+	echo "building debug version" $(SOUS_VERSION) "to" $(BIN_DIR) "with" $(CONCAT_XGO_ARGS)
+
+	mkdir -p $(BIN_DIR)
+	xgo $(CONCAT_XGO_ARGS) --targets=linux/amd64  ./
+	mv ./artifacts/bin/sous-linux-amd64 ./artifacts/bin/sous-$(SOUS_VERSION)
 
 clean:
 	rm -rf $(COVER_DIR)
@@ -254,6 +262,6 @@ postgres-connect:
 postgres-update-schema: postgres-start
 	liquibase --url jdbc:postgresql://localhost:$(PGPORT)/sous --changeLogFile=database/changelog.xml update
 
-.PHONY: artifactory clean clean-containers clean-container-certs clean-running-containers clean-container-images coverage deb-build install-fpm install-jfrog install-ggen install-build-tools legendary release semvertagchk test test-gofmt test-integration setup-containers test-unit reject-wip wip staticcheck postgres-start postgres-stop postgres-connect
+.PHONY: artifactory clean clean-containers clean-container-certs clean-running-containers clean-container-images coverage deb-build install-fpm install-jfrog install-ggen install-build-tools legendary release semvertagchk test test-gofmt test-integration setup-containers test-unit reject-wip wip staticcheck postgres-start postgres-stop postgres-connect build-debug
 
 #liquibase --url jdbc:postgresql://127.0.0.1:6543/sous --changeLogFile=database/changelog.xml update
