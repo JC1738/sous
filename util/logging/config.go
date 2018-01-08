@@ -85,11 +85,22 @@ func (cfg Config) getLogrusLevel() logrus.Level {
 	}
 }
 
+func deleteEmpty(s []string) []string {
+	var r []string
+	for _, str := range s {
+		if str != "" {
+			r = append(r, str)
+		}
+	}
+	return r
+}
+
 func (cfg Config) getBrokers() []string {
 	if len(cfg.Kafka.Brokers) != 0 {
-		return cfg.Kafka.Brokers
+		return deleteEmpty(cfg.Kafka.Brokers)
 	}
-	return strings.Split(cfg.Kafka.BrokerList, ",")
+
+	return deleteEmpty(strings.Split(cfg.Kafka.BrokerList, ","))
 }
 
 func (cfg Config) getKafkaLevel() Level {
