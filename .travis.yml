@@ -1,15 +1,30 @@
 sudo: required
 services:
 - docker
+- postgresql
 language: go
 go:
 - 1.9.2
 before_install:
 - bin/ci-setup
+
+- sudo service postgresql stop
+- sudo apt-get remove -q 'postgresql-*'
+- sudo apt-get update -q
+- sudo apt-get install -q postgresql-10 postgresql-client-10
+- sudo cp /etc/postgresql/{9.6,10}/main/pg_hba.conf
+- sudo service postgresql restart
+- sudo psql -c 'CREATE ROLE travis SUPERUSER LOGIN CREATEDB;' -U postgres
+
+- curl -LO https://github.com/liquibase/liquibase/releases/download/liquibase-parent-3.5.3/liquibase-debian_3.5.3_all.deb
+- sudo dpkg -i ./liquibase-debian_3.5.3_all.deb
+- sudo apt-get install -f
+- psql --version
 install:
 # - sudo apt-get install python3-proselint
 - bundle
 - "./bin/vendor-check"
+- make postgres-create-testdb
 script:
 - bundle exec danger
 - make -j2 test
@@ -23,6 +38,7 @@ after_success:
 - bin/codecov -f /tmp/sous-cover/count_merged.txt
 env:
   global:
+  - PGPORT=5432
   - GIT_AUTHOR_NAME=SousCI
   - GIT_COMMITTER_NAME=SousCI
   - GIT_AUTHOR_EMAIL=sous@nowhere.in.particular.com

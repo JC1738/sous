@@ -41,7 +41,7 @@ func levelFromString(name string) Level {
 		}
 	}
 
-	fmt.Printf("Failed to find a valid log level, going to use Extreme logging, configuration set was %s\n", name)
+	fmt.Printf("Logging: invalid level %q; falling back to Extreme.", name)
 
 	return ExtremeLevel
 }

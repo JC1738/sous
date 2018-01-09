@@ -200,6 +200,18 @@
 			"revisionTime": "2016-08-10T19:53:38Z"
 		},
 		{
+			"checksumSHA1": "IfZcD4U1dtllJKlPNeD2aU4Jn98=",
+			"path": "github.com/lib/pq",
+			"revision": "83612a56d3dd153a94a629cd64925371c9adad78",
+			"revisionTime": "2017-11-26T05:04:59Z"
+		},
+		{
+			"checksumSHA1": "ATnwV0POluBNQEMjPdylodz0oK0=",
+			"path": "github.com/lib/pq/oid",
+			"revision": "83612a56d3dd153a94a629cd64925371c9adad78",
+			"revisionTime": "2017-11-26T05:04:59Z"
+		},
+		{
 			"checksumSHA1": "/OoEj0wxK7Rd25jAlZv1xi+e9wg=",
 			"path": "github.com/kisielk/gotool",
 			"revision": "d6ce6262d87e3a4e153e86023ff56ae771554a41",
@@ -424,24 +436,6 @@
 			"revisionTime": "2016-08-17T05:08:34Z"
 		},
 		{
-			"checksumSHA1": "AnXFEvmaJ7w2Q7hWPcLUmCbPgq0=",
-			"path": "golang.org/x/tools/go/buildutil",
-			"revision": "ae8cc594552814363a7aeeb4f2825515a771fa38",
-			"revisionTime": "2017-11-19T20:52:17Z"
-		},
-		{
-			"checksumSHA1": "ZpAR2KupZto/mWf9zu5e6IKDWt0=",
-			"path": "golang.org/x/tools/go/loader",
-			"revision": "ae8cc594552814363a7aeeb4f2825515a771fa38",
-			"revisionTime": "2017-11-19T20:52:17Z"
-		},
-		{
-			"checksumSHA1": "QKvPv3TJ+ZnOLkUeUkT8Wm8eCV0=",
-			"path": "golang.org/x/tools/go/types/typeutil",
-			"revision": "ae8cc594552814363a7aeeb4f2825515a771fa38",
-			"revisionTime": "2017-11-19T20:52:17Z"
-		},
-		{
 			"checksumSHA1": "NC6sRRBg4e1wHOkOu2doF24QWh0=",
 			"path": "golang.org/x/tools/godoc/vfs",
 			"revision": "1cf0a337cd20f304e6caa20d6a07392e7f071245",
@@ -458,84 +452,6 @@
 			"path": "golang.org/x/tools/imports",
 			"revision": "1cf0a337cd20f304e6caa20d6a07392e7f071245",
 			"revisionTime": "2016-08-17T05:08:34Z"
-		},
-		{
-			"checksumSHA1": "FG8LnaSRTHBnrPHwa0zW4zX9K7M=",
-			"path": "honnef.co/go/tools/callgraph",
-			"revision": "376b3b58b9e4def403181ee2fd3d4cc7de8375ae",
-			"revisionTime": "2017-11-25T07:40:24Z"
-		},
-		{
-			"checksumSHA1": "fR7Q7BVwKHUEsUNGn6Q2zygAvTU=",
-			"path": "honnef.co/go/tools/callgraph/static",
-			"revision": "376b3b58b9e4def403181ee2fd3d4cc7de8375ae",
-			"revisionTime": "2017-11-25T07:40:24Z"
-		},
-		{
-			"checksumSHA1": "dP4Ft0yiZSTZOzzNho1Gg5b7o2w=",
-			"path": "honnef.co/go/tools/cmd/staticcheck",
-			"revision": "3139676c5e710ef5caf51cd29cc1ef2994cfb6b7",
-			"revisionTime": "2017-11-11T20:22:26Z"
-		},
-		{
-			"checksumSHA1": "smQXvyCgi0lsTRk7edZNx/z44rc=",
-			"path": "honnef.co/go/tools/deprecated",
-			"revision": "376b3b58b9e4def403181ee2fd3d4cc7de8375ae",
-			"revisionTime": "2017-11-25T07:40:24Z"
-		},
-		{
-			"checksumSHA1": "ZQAEQCc18o76M9Cyncm1W5cczJ8=",
-			"path": "honnef.co/go/tools/functions",
-			"revision": "376b3b58b9e4def403181ee2fd3d4cc7de8375ae",
-			"revisionTime": "2017-11-25T07:40:24Z"
-		},
-		{
-			"checksumSHA1": "ZWtH73AO33mmXmK2RfGwld1/00I=",
-			"path": "honnef.co/go/tools/internal/sharedcheck",
-			"revision": "376b3b58b9e4def403181ee2fd3d4cc7de8375ae",
-			"revisionTime": "2017-11-25T07:40:24Z"
-		},
-		{
-			"checksumSHA1": "44oONKG61hcaBAPaA2jNhBgYLmE=",
-			"path": "honnef.co/go/tools/lint",
-			"revision": "376b3b58b9e4def403181ee2fd3d4cc7de8375ae",
-			"revisionTime": "2017-11-25T07:40:24Z"
-		},
-		{
-			"checksumSHA1": "gKJKwlFyfVebwzqA3P/N3HJIq/0=",
-			"path": "honnef.co/go/tools/lint/lintutil",
-			"revision": "376b3b58b9e4def403181ee2fd3d4cc7de8375ae",
-			"revisionTime": "2017-11-25T07:40:24Z"
-		},
-		{
-			"checksumSHA1": "OB5QjdkxC9rYXruXUuoYSsxK+VY=",
-			"path": "honnef.co/go/tools/ssa",
-			"revision": "376b3b58b9e4def403181ee2fd3d4cc7de8375ae",
-			"revisionTime": "2017-11-25T07:40:24Z"
-		},
-		{
-			"checksumSHA1": "jgNTrcXg52qlqjkb/R2vKxtcDu4=",
-			"path": "honnef.co/go/tools/ssa/ssautil",
-			"revision": "376b3b58b9e4def403181ee2fd3d4cc7de8375ae",
-			"revisionTime": "2017-11-25T07:40:24Z"
-		},
-		{
-			"checksumSHA1": "9kqdoLEm2gHS9QVE1OXWBCtRqhI=",
-			"path": "honnef.co/go/tools/staticcheck",
-			"revision": "376b3b58b9e4def403181ee2fd3d4cc7de8375ae",
-			"revisionTime": "2017-11-25T07:40:24Z"
-		},
-		{
-			"checksumSHA1": "9u74dwwwi+tg9eBr86by4i4CMNM=",
-			"path": "honnef.co/go/tools/staticcheck/vrp",
-			"revision": "376b3b58b9e4def403181ee2fd3d4cc7de8375ae",
-			"revisionTime": "2017-11-25T07:40:24Z"
-		},
-		{
-			"checksumSHA1": "RY0sZkXnDI/MxBauBD28dwuulSs=",
-			"path": "honnef.co/go/tools/version",
-			"revision": "376b3b58b9e4def403181ee2fd3d4cc7de8375ae",
-			"revisionTime": "2017-11-25T07:40:24Z"
 		}
 	],
 	"rootPath": "github.com/opentable/sous"

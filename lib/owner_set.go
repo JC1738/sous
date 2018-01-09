@@ -27,6 +27,22 @@ func (os OwnerSet) Remove(owner string) {
 	delete(os, owner)
 }
 
+// Clone returns a deep copy of this OwnerSet.
+func (os OwnerSet) Clone() OwnerSet {
+	o := make(OwnerSet, len(os))
+	for k, v := range os {
+		o[k] = v
+	}
+	return o
+}
+
+// Merge adds the owners from other to this OwnerSet
+func (os OwnerSet) Merge(other OwnerSet) {
+	for k := range other {
+		os.Add(k)
+	}
+}
+
 // Equal returns true if two ownersets contain the same owner names.
 func (os OwnerSet) Equal(o OwnerSet) bool {
 	diff, _ := os.Diff(o)

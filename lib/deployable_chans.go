@@ -12,6 +12,9 @@ type (
 		Errs  chan *DiffResolution
 		sync.WaitGroup
 	}
+
+	// DeployablePairs is a list of DeployablePair
+	DeployablePairs []*DeployablePair
 )
 
 // NewDeployableChans returns a new DeployableChans with channels buffered to
@@ -40,6 +43,11 @@ func (d *DeployableChans) collect() DeployablePairs {
 		ds = append(ds, m)
 	}
 	return ds
+}
+
+// Collect returns a collected list of DeployablePairs represented by this DeployableChans
+func (d *DeployableChans) Collect() DeployablePairs {
+	return d.collect()
 }
 
 // ID returns the ID of this DeployablePair.

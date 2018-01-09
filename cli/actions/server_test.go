@@ -77,7 +77,6 @@ func TestEnsureGDMExists(t *testing.T) {
 			if err := ensureGDMExists(gdmSourceRepo, testPath, t.Logf); err != nil {
 				t.Error(err)
 			}
-
 		})
 	}
 

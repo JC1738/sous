@@ -77,15 +77,6 @@ func (d Deployment) Clone() *Deployment {
 	return &d
 }
 
-// Clone returns a deep copy of this OwnerSet.
-func (os OwnerSet) Clone() OwnerSet {
-	o := make(OwnerSet, len(os))
-	for k, v := range os {
-		o[k] = v
-	}
-	return o
-}
-
 // Clone returns a deep copy of this Volumes.
 func (vs Volumes) Clone() Volumes {
 	vols := make(Volumes, len(vs))
