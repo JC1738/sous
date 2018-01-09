@@ -10,14 +10,14 @@ with respect to its command line interface and HTTP interface.
 
 ### Added
 * Server: If don't set a valid default log level, use Extreme and print out a message
-* Server: storage module for Postgres. Uses placeholders correctly. As yet, not connected up.
+* Server: Storage module for Postgres. Uses placeholders correctly. As yet, not connected up.
 
 ### Fixed:
 * All: Creating a manifest with Owners field not sorted alphabetically was preventing
   any updates to other manifests because the field was being sorted and thus creating
   additional diffs (we disallow changed to the GDM that affect multiple manifests.)
   Now the Owners field is always ordered alphabetically on write fixing this issue.
-
+* Server: Validation when Kafka Cfg was enabled did not correctly check if brokers were specified.
 
 ## [0.5.61](//github.com/opentable/sous/compare/0.5.60...0.5.61)
 
