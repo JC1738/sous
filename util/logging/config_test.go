@@ -31,11 +31,18 @@ func TestLoggingConfig(t *testing.T) {
 		assert.Equal(t, cfg.getBrokers(), []string{"127.0.0.1:5000", "127.0.0.2:5000"})
 	})
 
-	t.Run("empty kafka brokers", func(t *testing.T) {
+	t.Run("empty kafka brokers list", func(t *testing.T) {
 		cfg := pangramConfig()
 		cfg.Kafka.Enabled = true
 		cfg.Kafka.BrokerList = ""
-		assert.Error(t, cfg.validateKafka(), "Error should have occurred")
+		assert.Error(t, cfg.validateKafka(), "Error should have occurred, must have broker list")
+	})
+
+	t.Run("no kafka topic", func(t *testing.T) {
+		cfg := pangramConfig()
+		cfg.Kafka.Enabled = true
+		cfg.Kafka.Topic = ""
+		assert.Error(t, cfg.validateKafka(), "Error should have occurred, must have topic")
 	})
 
 	t.Run("graphite server", func(t *testing.T) {
