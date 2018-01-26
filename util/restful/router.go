@@ -52,9 +52,9 @@ type (
 
 // Exchange implements Exchanger on ExchangeLogger.
 func (xlog *ExchangeLogger) Exchange() (data interface{}, status int) {
-	xlog.Vomitf("Server: <- %s %s params: %v", xlog.Method, xlog.URL.String(), xlog.Params)
+	logging.ReportMsg(logging.Log, logging.DebugLevel, fmt.Sprintf("Server: <- %s %s params: %v", xlog.Method, xlog.URL.String(), xlog.Params))
 	data, status = xlog.Exchanger.Exchange()
-	xlog.Vomitf("Server: -> %d: %#v", status, data)
+	logging.ReportMsg(logging.Log, logging.DebugLevel, fmt.Sprintf("Server: -> %d: %#v", status, data))
 	return
 }
 
