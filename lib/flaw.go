@@ -85,7 +85,6 @@ type FlawMessage struct {
 	Flaws []Flaw
 }
 
-// ReturnFlawMsg takes the flaws and creates a string for logging
 func (msg FlawMessage) ReturnFlawMsg() string {
 	var msgFlaws string
 	for _, flaw := range msg.Flaws {
