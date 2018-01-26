@@ -32,10 +32,10 @@ func TestReturnFlawMsg_nil_flaws(t *testing.T) {
 	assert := assert.New(t)
 
 	hmsg := handleGDMMessage{
-		CallerInfo:   logging.GetCallerInfo(logging.NotHere()),
-		msg:          "test",
-		flawsMessage: sous.FlawMessage{Flaws: nil},
-		err:          nil,
+		CallerInfo: logging.GetCallerInfo(logging.NotHere()),
+		msg:        "test",
+		flaws:      nil,
+		err:        nil,
 	}
 
 	//   a.NotPanics(func(){
@@ -43,7 +43,7 @@ func TestReturnFlawMsg_nil_flaws(t *testing.T) {
 	//   },
 
 	assert.NotPanics(func() {
-		hmsg.flawsMessage.ReturnFlawMsg()
+		hmsg.returnFlawMsg()
 	}, "Calling returnFlawMsg should not panic with flaws is nil")
 
 }
@@ -56,13 +56,13 @@ func TestReturnFlawMsg(t *testing.T) {
 	assert.Len(t, flaws, 3)
 
 	hmsg := handleGDMMessage{
-		CallerInfo:   logging.GetCallerInfo(logging.NotHere()),
-		msg:          "test",
-		flawsMessage: sous.FlawMessage{Flaws: flaws},
-		err:          nil,
+		CallerInfo: logging.GetCallerInfo(logging.NotHere()),
+		msg:        "test",
+		flaws:      flaws,
+		err:        nil,
 	}
 
-	flawsMsg := hmsg.flawsMessage.ReturnFlawMsg()
+	flawsMsg := hmsg.returnFlawMsg()
 
 	assert.Contains(t, flawsMsg, "Missing resource")
 
