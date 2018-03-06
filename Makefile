@@ -4,7 +4,10 @@ XDG_DATA_HOME ?= $(HOME)/.local/share
 DEV_POSTGRES_DIR ?= $(XDG_DATA_HOME)/sous/postgres
 DEV_POSTGRES_DATA_DIR ?= $(DEV_POSTGRES_DIR)/data
 PGPORT ?= 6543
+DOCKERPGPORT ?= 5432
+PG_DOCKER_NAME ?= pgdocker
 
+HOSTNAME = $(shell hostname)
 DB_NAME = sous
 TEST_DB_NAME = sous_test_template
 
@@ -14,6 +17,10 @@ LIQUIBASE_SHARED_FLAGS = --changeLogFile=database/changelog.xml --defaultsFile=.
 
 LIQUIBASE_FLAGS := --url $(LIQUIBASE_SERVER)/$(DB_NAME) $(LIQUIBASE_SHARED_FLAGS)
 LIQUIBASE_TEST_FLAGS := --url $(LIQUIBASE_SERVER)/$(TEST_DB_NAME) $(LIQUIBASE_SHARED_FLAGS)
+
+LIQUIBASE_DOCKER_FLAGS := --url "$(LIQUIBASE_SERVER)/$(DB_NAME)?user=pguser&password=pguser" $(LIQUIBASE_SHARED_FLAGS)
+LIQUIBASE_DOCKER_TEST_FLAGS := --url "$(LIQUIBASE_SERVER)/$(TEST_DB_NAME)?user=pguser&password=pguser" $(LIQUIBASE_SHARED_FLAGS)
+
 
 SQLITE_URL := https://sqlite.org/2017/sqlite-autoconf-3160200.tar.gz
 GO_VERSION := 1.10
@@ -298,6 +305,23 @@ $(DEV_POSTGRES_DATA_DIR):
 $(DEV_POSTGRES_DATA_DIR)/postgresql.conf: $(DEV_POSTGRES_DATA_DIR) dev_support/postgres/postgresql.conf
 	cp dev_support/postgres/postgresql.conf $@
 
+
+postgres-docker-start:
+	if ! (docker run postgres:10.3 pg_isready -h $(HOSTNAME) -p $(PGPORT)); then \
+		docker run --name postgres -p 6543:5432 --rm --user "$(id -u):$(id -g)" -v /etc/passwd:/etc/passwd:ro -v $(DEV_POSTGRES_DATA_DIR):/var/lib/postgresql/data postgres:10.3 & \
+		until docker run postgres:10.3 pg_isready -h $(HOSTNAME) -p $(PGPORT); do sleep 1; done \
+	fi
+	docker run postgres:10.3 createdb -h $(HOSTNAME) -p $(PGPORT) -U postgres $(TEST_DB_NAME) > /dev/null 2>&1 || true
+
+	#docker run -it -p 6543:5432 --rm --user "$(id -u):$(id -g)" -v /etc/passwd:/etc/passwd:ro -v $(DEV_POSTGRES_DATA_DIR):/var/lib/postgresql/data postgres
+	#docker run -it -p 6543:5432 --rm --user "$(id -u):$(id -g)" -v /etc/passwd:/etc/passwd:ro -v /home/jc/.local/share/sous/postgres:/var/lib/postgresql/data postgres
+		#docker run -it --rm -v pgdata:/var/lib/postgresql/data bash chown -R 1000:1000 /var/lib/postgresql/data & \
+		#docker run -it --rm --user 1000:1000 -v pgdata:/var/lib/postgresql/data postgres & \
+		#docker run -d --name $(PG_DOCKER_NAME) -v pgdata:/var/lib/postgresql/data -v "dev_support/postgres/postgresql.conf":/etc/postgresql/postgresql.conf postgres:10.3 -c 'config_file=/etc/postgresql/postgresql.conf' & \
+#docker volume create pgdata & \
+#		docker run -d --name $(PG_DOCKER_NAME) -p 5432:5432 -v pgdata:/var/lib/postgressql/data postgres:10.3 & \
+#		until docker run --rm --link $(PG_DOCKER_NAME):pg postgres:10.3 pg_isready -U postgres -h pg; do sleep 1; done \
+
 postgres-start: $(DEV_POSTGRES_DATA_DIR)/postgresql.conf
 	if ! (pg_isready -h localhost -p $(PGPORT)); then \
 		postgres -D $(DEV_POSTGRES_DATA_DIR) -p $(PGPORT) & \
@@ -317,6 +341,9 @@ postgres-stop:
 
 postgres-connect:
 	psql -h localhost -p $(PGPORT) sous
+
+postgres-docker-update-schema:
+	liquibase $(LIQUIBASE_DOCKER_FLAGS) update
 
 postgres-update-schema: postgres-start
 	liquibase $(LIQUIBASE_FLAGS) update
